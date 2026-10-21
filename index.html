@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#070714">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>LingoBro — Belajar Bahasa</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="toasts" id="toasts"></div>
+<div class="confetti-wrap" id="confetti"></div>
+
+<div class="modal-overlay hidden" id="kanji-modal">
+  <div class="modal-content">
+    <button class="modal-close" id="kanji-close">×</button>
+    <div class="kanji-big" id="kanji-char">水</div>
+    <div class="kanji-info" id="kanji-info"></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="topline">
+      <h1>Lingo<span>Bro</span> 🌏</h1>
+      <button class="iconbtn" id="theme-btn" title="Ganti tema">🌙</button>
+    </div>
+    <div class="hud">
+      <div class="chip lvl">
+        <span class="badge-lvl" id="hud-lvl">Lv 1</span>
+        <span class="xpbar"><i id="hud-xp"></i></span>
+        <span class="xptxt" id="hud-xptxt">0 XP</span>
+      </div>
+      <div class="chip">🔥 <b id="hud-streak">0</b> hari</div>
+      <div class="chip">🔖 <b id="hud-bookmarks">0</b></div>
+      <div class="chip">📅 <b id="hud-due">0</b> due</div>
+    </div>
+    <div class="daily-banner" id="daily-banner">
+      <span>🎯 <b id="hud-daily">0</b>/15 soal benar hari ini</span>
+      <button class="claim-btn hidden" id="hud-claim">Klaim +100 XP</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-view="belajar">📚 Belajar</button>
+    <button class="tab" data-view="kuis">🎯 Kuis</button>
+    <button class="tab" data-view="baca">📖 Baca</button>
+    <button class="tab" data-view="dengar">🎧 Dengar</button>
+    <button class="tab" data-view="tulis">✍️ Tulis</button>
+    <button class="tab" data-view="ulang">🔁 Ulang <span class="due-badge hidden" id="due-badge">0</span></button>
+    <button class="tab" data-view="favorit">🔖 Favorit</button>
+    <button class="tab" data-view="stats">📊 Stat</button>
+  </nav>
+
+  <section id="view-belajar">
+    <div class="picker">
+      <select id="fc-lang"></select>
+      <select id="fc-cat"></select>
+      <select id="fc-script" class="script-filter hidden">
+        <option value="all">Semua Script</option>
+        <option value="kanji">漢 Kanji</option>
+        <option value="hiragana">あ Hiragana</option>
+        <option value="katakana">ア Katakana</option>
+      </select>
+      <select id="fc-order">
+        <option value="smart">🧠 Smart (baru → due)</option>
+        <option value="original">📖 Urutan Asli</option>
+        <option value="random">🎲 Acak</option>
+      </select>
+    </div>
+    <div class="bar"><i id="fc-bar"></i></div>
+    <div id="fc-main">
+      <div class="scene">
+        <div class="fc" id="fc-card">
+          <div class="face">
+            <button class="audio-btn" id="fc-audio" title="Dengarkan">🔊</button>
+            <button class="bookmark-btn" id="fc-bookmark" title="Bookmark">🔖</button>
+            <span class="tag" id="fc-tag">Jepang</span>
+            <span class="script-badge" id="fc-script-badge"></span>
+            <div class="word" id="fc-front" dir="auto">水</div>
+            <div class="kana" id="fc-kana"></div>
+            <div class="latin" id="fc-latin"></div>
+            <button class="detail-btn hidden" id="fc-detail">🀄 Lihat Detail Kanji</button>
+            <div class="hint">Klik kartu untuk lihat arti</div>
+          </div>
+          <div class="face back">
+            <span class="tag">Arti</span>
+            <div class="word" id="fc-back" dir="auto">Air</div>
+            <div class="hint">Sudah ingat?</div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn bad" id="fc-lupa">😅 Lupa</button>
+        <button class="btn ok" id="fc-ingat">✅ Ingat</button>
+      </div>
+      <p class="hint center" style="margin-top:12px" id="fc-count"></p>
+    </div>
+    <div id="fc-done" class="card center hidden">
+      <div class="big" id="fc-score">0/0</div>
+      <p class="hint" style="margin:8px 0 18px">Sesi selesai! Dapat <b id="fc-xp">0</b> XP 💪</p>
+      <button class="btn primary full" id="fc-restart">Ulangi Sesi</button>
+      <button class="btn ghost full" id="fc-share" style="margin-top:10px">📤 Bagikan</button>
+    </div>
+  </section>
+
+  <section id="view-kuis" class="hidden">
+    <div class="picker">
+      <select id="q-lang"></select>
+      <select id="q-cat"></select>
+    </div>
+    <div class="bar"><i id="q-bar"></i></div>
+    <div id="q-main">
+      <p class="hint center" id="q-progress">Soal 1 dari 10</p>
+      <div class="qword-wrap">
+        <div class="qword" id="q-word" dir="auto">水</div>
+        <button class="audio-btn small" id="q-audio" title="Dengarkan">🔊</button>
+      </div>
+      <div class="qkana" id="q-kana"></div>
+      <div class="qlatin" id="q-latin"></div>
+      <div class="opts" id="q-opts"></div>
+    </div>
+    <div id="q-done" class="card center hidden">
+      <div class="big" id="q-score">0/10</div>
+      <p class="hint" id="q-msg" style="margin:8px 0 18px"></p>
+      <button class="btn primary full" id="q-restart">Main Lagi</button>
+      <button class="btn ghost full" id="q-share" style="margin-top:10px">📤 Bagikan</button>
+    </div>
+  </section>
+
+  <section id="view-baca" class="hidden">
+    <div class="picker">
+      <select id="rd-lang"></select>
+      <select id="rd-cat"></select>
+    </div>
+    <div class="bar"><i id="rd-bar"></i></div>
+    <div id="rd-main" class="hidden">
+      <p class="hint center" id="rd-progress">Soal 1 dari 10</p>
+      <div class="qword-wrap">
+        <div class="qword" id="rd-word" dir="auto">水</div>
+        <button class="audio-btn small" id="rd-audio" title="Dengarkan">🔊</button>
+      </div>
+      <p class="hint center" id="rd-meaning" style="margin:4px 0 20px;font-size:14px"></p>
+      <div class="opts" id="rd-opts"></div>
+    </div>
+    <div id="rd-empty" class="card center hidden">
+      <div style="font-size:52px">🈶</div>
+      <p style="margin:10px 0;font-weight:700">Belum ada kanji untuk latihan baca</p>
+      <p class="hint">Coba pilih bahasa Jepang dan kategori lain.</p>
+    </div>
+    <div id="rd-done" class="card center hidden">
+      <div class="big" id="rd-score">0/10</div>
+      <p class="hint" id="rd-msg" style="margin:8px 0 18px"></p>
+      <button class="btn primary full" id="rd-restart">Main Lagi</button>
+      <button class="btn ghost full" id="rd-share" style="margin-top:10px">📤 Bagikan</button>
+    </div>
+  </section>
+
+  <section id="view-dengar" class="hidden">
+    <div class="picker">
+      <select id="l-lang"></select>
+      <select id="l-cat"></select>
+    </div>
+    <div class="bar"><i id="l-bar"></i></div>
+    <div id="l-main">
+      <p class="hint center" id="l-progress">Soal 1 dari 10</p>
+      <div class="listen-box">
+        <button class="play-btn" id="l-play" title="Putar audio">🔊</button>
+        <p class="hint">Tap untuk mendengarkan</p>
+      </div>
+      <div class="opts" id="l-opts"></div>
+    </div>
+    <div id="l-done" class="card center hidden">
+      <div class="big" id="l-score">0/10</div>
+      <p class="hint" id="l-msg" style="margin:8px 0 18px"></p>
+      <button class="btn primary full" id="l-restart">Main Lagi</button>
+      <button class="btn ghost full" id="l-share" style="margin-top:10px">📤 Bagikan</button>
+    </div>
+  </section>
+
+  <section id="view-tulis" class="hidden">
+    <div class="picker">
+      <select id="w-lang"></select>
+      <select id="w-cat"></select>
+    </div>
+    <div class="bar"><i id="w-bar"></i></div>
+    <div id="w-main">
+      <p class="hint center" id="w-progress">Soal 1 dari 10</p>
+      <div class="qword" id="w-prompt" dir="auto">Halo</div>
+      <p class="hint center" id="w-sub" style="margin-bottom:16px"></p>
+      <div class="write-row">
+        <input type="text" id="w-input" placeholder="Ketik jawaban..." autocomplete="off" autocorrect="off" spellcheck="false" maxlength="50">
+        <button class="btn primary" id="w-submit">Kirim</button>
+      </div>
+      <div class="char-counter" id="w-charcount">
+        <span><b id="w-count">0</b> / <span id="w-max">50</span> karakter</span>
+        <span class="len-hint" id="w-lenhint"></span>
+      </div>
+      <div class="write-row" style="margin-top:10px">
+        <button class="btn ghost" id="w-hint">💡 Bantuan</button>
+      </div>
+      <p class="center" id="w-feedback" style="margin-top:14px;font-weight:700"></p>
+    </div>
+    <div id="w-done" class="card center hidden">
+      <div class="big" id="w-score">0/10</div>
+      <p class="hint" id="w-msg" style="margin:8px 0 18px"></p>
+      <button class="btn primary full" id="w-restart">Main Lagi</button>
+      <button class="btn ghost full" id="w-share" style="margin-top:10px">📤 Bagikan</button>
+    </div>
+  </section>
+
+  <section id="view-ulang" class="hidden">
+    <div class="bar"><i id="r-bar"></i></div>
+    <div id="r-main" class="hidden">
+      <p class="hint center" id="r-progress">Kartu 1 dari 10</p>
+      <div class="qword-wrap">
+        <div class="qword" id="r-word" dir="auto">水</div>
+        <button class="audio-btn small" id="r-audio" title="Dengarkan">🔊</button>
+      </div>
+      <div class="qkana" id="r-kana"></div>
+      <div class="qlatin" id="r-latin"></div>
+      <div class="opts" id="r-opts"></div>
+    </div>
+    <div id="r-empty" class="card center hidden">
+      <div style="font-size:52px">🎉</div>
+      <p style="margin:10px 0;font-weight:700">Belum ada kartu yang due!</p>
+      <p class="hint">Kartu muncul di sini otomatis sesuai jadwal SRS — 1 hari, 3 hari, 7 hari, 21 hari, 60 hari. Belajar dulu di tab 📚 atau 🎯 biar ada yang dijadwalkan.</p>
+    </div>
+    <div id="r-done" class="card center hidden">
+      <div class="big" id="r-score">0/10</div>
+      <p class="hint" id="r-msg" style="margin:8px 0 18px"></p>
+      <button class="btn primary full" id="r-restart">Ulangi</button>
+      <button class="btn ghost full" id="r-share" style="margin-top:10px">📤 Bagikan</button>
+    </div>
+  </section>
+
+  <section id="view-favorit" class="hidden">
+    <div class="bar"><i id="f-bar"></i></div>
+    <div id="f-main" class="hidden">
+      <p class="hint center" id="f-progress">Kartu 1 dari 0</p>
+      <div class="qword-wrap">
+        <div class="qword" id="f-word" dir="auto">水</div>
+        <button class="audio-btn small" id="f-audio" title="Dengarkan">🔊</button>
+      </div>
+      <div class="qkana" id="f-kana"></div>
+      <div class="qlatin" id="f-latin"></div>
+      <div class="opts" id="f-opts"></div>
+    </div>
+    <div id="f-empty" class="card center hidden">
+      <div style="font-size:52px">🔖</div>
+      <p style="margin:10px 0;font-weight:700">Belum ada kata favorit</p>
+      <p class="hint">Tap ikon 🔖 di kartu belajar untuk menandai kata.</p>
+    </div>
+    <div id="f-done" class="card center hidden">
+      <div class="big" id="f-score">0/0</div>
+      <p class="hint" id="f-msg" style="margin:8px 0 18px"></p>
+      <button class="btn primary full" id="f-restart">Ulangi</button>
+    </div>
+  </section>
+
+  <section id="view-stats" class="hidden">
+    <div class="statgrid">
+      <div class="stat"><b id="s-level">1</b><small>Level</small></div>
+      <div class="stat"><b id="s-xp">0</b><small>Total XP</small></div>
+      <div class="stat"><b id="s-streak">0</b><small>🔥 Streak</small></div>
+      <div class="stat"><b id="s-master">0</b><small>Kata dikuasai</small></div>
+      <div class="stat"><b id="s-acc">0%</b><small>Akurasi</small></div>
+      <div class="stat"><b id="s-badges">0</b><small>Badge</small></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <p class="sec-title">🈶 PROGRES SCRIPT JEPANG</p>
+      <div id="s-scripts"></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <p class="sec-title">🔥 AKTIVITAS 7 HARI</p>
+      <div class="heatmap" id="s-heat"></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <p class="sec-title">🏅 BADGE</p>
+      <div class="badgegrid" id="s-badgegrid"></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <p class="sec-title">🌏 PROGRES PER BAHASA</p>
+      <div id="s-langs"></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <p class="sec-title">💾 BACKUP DATA</p>
+      <div class="write-row">
+        <button class="btn primary" id="s-export">📤 Export JSON</button>
+        <button class="btn ghost" id="s-import-btn">📥 Import</button>
+      </div>
+      <input type="file" id="s-import-file" accept=".json" hidden>
+      <p class="hint center" style="margin-top:8px">Simpan backup sebelum ganti perangkat!</p>
+    </div>
+    <button class="btn ghost full" id="s-reset">🗑️ Reset Semua Progres</button>
+  </section>
+
+  <p class="foot">Progres tersimpan otomatis di browser kamu 🔒</p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
